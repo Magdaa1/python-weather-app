@@ -1,9 +1,10 @@
+import matplotlib.pyplot as plt
 import requests
 import pandas as pd
 import sys
 
 # Zastąp 'TWÓJ_KLUCZ_API' kluczem wygenerowanym na OpenWeatherMap
-API_KEY = "TWOJ_KLUCZ_API"
+API_KEY = "Twoj_klucz"
 miasto = input("Dla jakiego miasta chcesz sprawdzic pogode? ")
 
 # Wyczyść miasto, by usunąć potencjalne spacje i upewnić się, że jest poprawne w URL
@@ -13,7 +14,7 @@ if not miasto:
     print("Brak nazwy miasta. Program kończy działanie.")
     sys.exit()
 
-# Adres URL do pobrania danych o pogodzie
+# NOWY Adres URL do pobrania PROGNOZY
 url = f"https://api.openweathermap.org/data/2.5/weather?q={miasto}&appid={API_KEY}&units=metric"
 
 # Wysyłanie zapytania i pobieranie odpowiedzi
@@ -40,6 +41,34 @@ if odpowiedz.status_code == 200:
 
     print("\nPrezentacja danych w formie tabeli:")
     print(dane_ramka)
+
+    # --- WIZUALIZACJA DANYCH(MATPLOTLIB) - --
+
+    # Przygotowanie danych do wykresu
+    etykiety = ['Temperatura (°C)', 'Wilgotność (%)']
+    wartosci = [temperatura, wilgotnosc]
+
+    # Tworzenie wykresu słupkowego
+    plt.figure(figsize=(8, 6))  # Ustawienie rozmiaru okna wykresu
+
+    # Stworzenie słupków
+    wykres = plt.bar(etykiety, wartosci, color=['skyblue', 'lightcoral'])
+
+    # Dodanie etykiet (wartości) na szczycie słupków
+    for bar in wykres:
+        yval = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width() / 2.0, yval,
+                 round(yval, 1), ha='center', va='bottom', fontsize=12)
+
+    # Dodanie tytułów i etykiet
+    plt.title(f'Kluczowe Parametry Pogody dla {miasto}', fontsize=16)
+    plt.ylabel('Wartość', fontsize=12)
+    plt.ylim(0, max(wartosci) * 1.2)  # Ustawienie limitu osi Y
+
+    # Wyświetlenie wykresu
+    plt.show()
+
+    # ----------------------------------------
     # Użyjemy nazwy miasta, aby nazwa pliku była unikalna
     nazwa_pliku = f"pogoda_{miasto.lower()}.csv"
 
